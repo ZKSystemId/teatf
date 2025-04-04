@@ -126,7 +126,7 @@ async function distributeTokens() {
 
         logInfo(`?? Ada ${recipients.length} alamat yang belum menerima token.`);
 
-        let transactionLimit = Math.min(recipients.length, Math.floor(Math.random() * (110 - 101 + 1) + 5));
+        let transactionLimit = Math.min(recipients.length, Math.floor(Math.random() * (110 - 101 + 1) + 101));
         logInfo(`?? Akan mengirim ${transactionLimit} transaksi hari ini.`);
 
         let failedRecipients = [];
