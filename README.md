@@ -7,7 +7,6 @@ Fitur :
 - Batas transaksi per hari 101 - 110 ( karna direkomendasikan 101 Transaksi saja perhari )
 - Ada delay per transaksi agar transaksi terlihat lebih natural
 - Fitur tambahan notifikasi telegram setiap transaksi berhasil
-- 
 
 _**YOK DIMULAI**_
 
