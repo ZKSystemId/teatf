@@ -52,6 +52,11 @@ Step by Step menggunakan botnya :
 - Cari bagian PRIVATE_KEY_KALIAN dan isi dengan private key kalian
 - Cari bagian CONTRACT_ADDRESS dan paste contract address token kalian
 - Cari bagian RPC_URL dan CHAIN_ID , pastikan sesuai dengan RPC dan Chain ID terbaru Tea Sepolia
+
+> ( Opsional ) kalo kalian pengen dapetin notifikasi dari bot telegram, silahkan ikuti step berikut ( kalau tidak minat silahkan di skip dan langsung save saja file .envnya )
+- Bot Tokennya silahkan kalian buat botnya dan ambil bot tokennya disini : https://t.me/BotFather
+- Telegram Chat ID silahkan ambil disini : https://t.me/Check_Telegram_IDBot
+- Copy dua duanya dan paste dibagian Bot Token dan Telegram Chat ID
 - Save file .env nya
 - Jalankan scriptnya pake command ini :
 ```
