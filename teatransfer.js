@@ -83,7 +83,7 @@ function writeAddressesToFile(filename, addresses) {
 // === Fungsi Fetch Data KYC ===
 async function fetchKYCAddresses() {
     try {
-        logInfo("?? Mengunduh daftar alamat KYC...");
+        logInfo("Mengunduh daftar alamat KYC...");
         const response = await axios.get("https://raw.githubusercontent.com/clwkevin/LayerOS/main/addressteasepoliakyc.txt");
         return response.data.split('\n').map(addr => addr.trim().toLowerCase());
     } catch (error) {
@@ -93,10 +93,10 @@ async function fetchKYCAddresses() {
 }
 
 // === Fungsi Delay dengan Rentang Tertentu ===
-function delay(minMs, maxMs) {
-    const delayMs = Math.floor(Math.random() * (maxMs - minMs) + minMs);
-    return new Promise(resolve => setTimeout(resolve, delayMs));
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
+
 
 // === Fungsi Distribusi Token ===
 async function distributeTokens() {
@@ -120,50 +120,51 @@ async function distributeTokens() {
         writeAddressesToFile('kyc_addresses_pending.txt', []);
 
         if (recipients.length === 0) {
-            logInfo("? Semua alamat KYC sudah menerima token.");
+            logInfo(" Semua alamat KYC sudah menerima token.");
             return;
         }
 
         logInfo(`?? Ada ${recipients.length} alamat yang belum menerima token.`);
 
-        let transactionLimit = Math.min(recipients.length, Math.floor(Math.random() * (110 - 101 + 1) + 101));
+        let transactionLimit = Math.min(recipients.length, Math.floor(Math.random() * (110 - 101 + 1) + 5));
         logInfo(`?? Akan mengirim ${transactionLimit} transaksi hari ini.`);
 
         let failedRecipients = [];
         let selectedRecipients = recipients.slice(0, transactionLimit).sort(() => 0.5 - Math.random());
 
         for (let i = 0; i < selectedRecipients.length; i++) {
-            const recipient = selectedRecipients[i];
-            const amountToSend = ethers.parseUnits("1.0", decimals);
+    const recipient = selectedRecipients[i];
+    const amountToSend = ethers.parseUnits("1.0", decimals);
 
-            const minDelay = 1 * 60 * 1000;
-            const maxDelay = 60 * 60 * 1000;
-            const delayMs = Math.floor(Math.random() * (maxDelay - minDelay) + minDelay);
+    // Tentukan delay sebelum transaksi
+    const delayMs = Math.floor(Math.random() * (5 * 60 * 1000 - 2 * 60 * 1000) + 1 * 60 * 1000);
+    logInfo(`? Menunggu ${Math.floor(delayMs / 1000)} detik sebelum mengirim ke ${recipient}...`);
 
-            logInfo(`Menunggu ${Math.floor(delayMs / 1000)} detik sebelum mengirim ke ${recipient}...`);
-            await delay(delayMs);
+    await delay(delayMs);  // ? Pastikan transaksi benar-benar menunggu
 
-            try {
-                logInfo(`⚡ Mengirim transaksi ke ${recipient}...`);
-                const tx = await tokenContract.transfer(recipient, amountToSend);
-                const receipt = await tx.wait(3); // tunggu 3 block konfirmasi
-                logInfo(`✅ ${i + 1}. Transaksi Berhasil (${recipient}) - TX Hash: ${tx.hash}`);
+    try {
+        logInfo(`? Mengirim transaksi ke ${recipient}...`);
+        const tx = await tokenContract.transfer(recipient, amountToSend);
+        const receipt = await tx.wait(3); // tunggu 3 block konfirmasi
+        logInfo(`? ${i + 1}. Transaksi Berhasil (${recipient}) - TX Hash: ${tx.hash}`);
 
-                sentRecipients.push(recipient);
-                sentRecipients = [...new Set(sentRecipients)];
-                writeAddressesToFile('kyc_addresses_sent.txt', sentRecipients);
+        sentRecipients.push(recipient);
+        sentRecipients = [...new Set(sentRecipients)];
+        writeAddressesToFile('kyc_addresses_sent.txt', sentRecipients);
 
-                await delay(10 * 1000); // jeda antar transaksi
-            } catch (error) {
-                logError(`❌ ${i + 1}. Transaksi Gagal (${recipient}) - ${error.message}`);
-                failedRecipients.push(recipient);
-            }
-        }
+        // Tambahkan delay setelah transaksi
+        const postTxDelay = Math.floor(Math.random() * (70 * 1000 - 20 * 1000) + 30 * 1000); // 30–90 detik
+        await delay(postTxDelay);
+    } catch (error) {
+        logError(`? ${i + 1}. Transaksi Gagal (${recipient}) - ${error.message}`);
+        failedRecipients.push(recipient);
+    }
+}
 
         // Simpan ulang daftar gagal (untuk dicoba lagi besok)
         writeAddressesToFile('kyc_addresses_pending.txt', failedRecipients);
 
-        logInfo(`?? Transaksi hari ini selesai. Berhasil: ${transactionLimit - failedRecipients.length}, Gagal: ${failedRecipients.length}`);
+        logInfo(` Transaksi hari ini selesai. Berhasil: ${transactionLimit - failedRecipients.length}, Gagal: ${failedRecipients.length}`);
     } catch (error) {
         logError(error.message);
     }
@@ -182,9 +183,9 @@ async function startDailyLoop() {
 
         let waitTime = tomorrow - now;
         logInfo(`? Selesai untuk hari ini. Menunggu hingga ${tomorrow.toISOString()}...\n`);
-        sendTelegramMessage("? Transaksi hari ini selesai. Menunggu hingga besok.");
+        sendTelegramMessage("Transaksi hari ini selesai. Menunggu hingga besok.");
 
-        await delay(waitTime, waitTime + 1000 * 60 * 5); // Tambahkan sedikit variasi (hingga 5 menit) agar tidak terlalu terprediksi
+        await delay(waitTime + Math.floor(Math.random() * 3 * 60 * 1000)); // Tambahkan sedikit variasi (hingga 5 menit) agar tidak terlalu terprediksi
     }
 }
 
