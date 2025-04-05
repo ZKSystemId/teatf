@@ -21,8 +21,8 @@ Deploy Disini : https://sepolia.tea.xyz/address/0x847d23084C474E7a0010Da5Fa869b4
 
 # Clone repositorynya
 ```
-git clone https://github.com/freezydkz/Bulk-transfer-tea.git
-cd Bulk-transfer-tea
+git clone https://github.com/ZKSystemId/teatf.git
+cd teatf
 ```
 
 # Create screen ( Biar bisa running di background )
